@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle, LogOut, User } from "lucide-react";
+import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle, LogOut, User, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -121,6 +121,16 @@ export function Header() {
                 <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
                   <Settings className="w-4 h-4 mr-2" />
                   Configurações
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <a 
+                    href="https://wa.me/5511979705089?text=Olá! Preciso de suporte com o AlvoZap." 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <Headphones className="w-4 h-4 mr-2" />
+                    Suporte
+                  </a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">

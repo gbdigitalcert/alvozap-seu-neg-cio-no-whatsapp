@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Bell, Check, X, Truck, Printer, MapPin, CheckCheck } from "lucide-react";
+import { Search, Bell, Check, X, Truck, Printer, MapPin, CheckCheck, MessageCircle } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -277,9 +277,19 @@ export default function Pedidos() {
               <p className="text-lg font-bold text-foreground">24</p>
             </div>
           </div>
-          <Button variant="outline" className="gap-2 text-primary">
-            <Bell className="w-4 h-4" />
-            Suporte AlvoZap
+          <Button 
+            variant="outline" 
+            className="gap-2 text-success border-success/30 hover:bg-success/10"
+            asChild
+          >
+            <a 
+              href="https://wa.me/5511979705089?text=Olá! Preciso de suporte com o AlvoZap." 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Suporte AlvoZap
+            </a>
           </Button>
         </div>
       </motion.div>
