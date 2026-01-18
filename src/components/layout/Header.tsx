@@ -1,8 +1,16 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 import logoAlvo from "@/assets/logo-alvo.png";
 
 const navItems = [
@@ -15,6 +23,22 @@ const navItems = [
 
 export function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full bg-card border-b border-border">
@@ -75,10 +99,36 @@ export function Header() {
               Conectar WhatsApp
             </Button>
 
-            <Avatar className="w-10 h-10 border-2 border-border cursor-pointer hover:border-primary transition-colors">
-              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
-              <AvatarFallback className="bg-gradient-primary text-primary-foreground">AZ</AvatarFallback>
-            </Avatar>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="w-10 h-10 border-2 border-border cursor-pointer hover:border-primary transition-colors">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email || 'default'}`} />
+                  <AvatarFallback className="bg-gradient-primary text-primary-foreground">
+                    {user?.nomeResponsavel ? getInitials(user.nomeResponsavel) : "AZ"}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-card">
+                <div className="px-3 py-2">
+                  <p className="text-sm font-medium text-foreground">{user?.nomeResponsavel}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
+                  <User className="w-4 h-4 mr-2" />
+                  Minha Conta
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configurações
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
