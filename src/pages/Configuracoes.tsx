@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Store, Clock, CreditCard, Bell, Users, Shield, MessageSquare } from "lucide-react";
+import { Store, Clock, CreditCard, Bell, Shield, MessageCircle, Headphones } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -100,11 +100,46 @@ export default function Configuracoes() {
             );
           })}
 
-          {/* Danger Zone */}
+          {/* Support Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
+            className="card-elevated p-6 border-primary/20"
+          >
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Headphones className="w-5 h-5 text-primary" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground">Precisa de Ajuda?</h2>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-foreground">Fale com nosso suporte</p>
+                <p className="text-sm text-muted-foreground">Tire suas dúvidas diretamente pelo WhatsApp</p>
+              </div>
+              <Button 
+                className="gap-2 bg-success text-success-foreground hover:bg-success/90"
+                asChild
+              >
+                <a 
+                  href="https://wa.me/5511979705089?text=Olá! Preciso de suporte com o AlvoZap." 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Falar com Suporte
+                </a>
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Danger Zone */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
             className="card-elevated p-6 border-destructive/30"
           >
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
