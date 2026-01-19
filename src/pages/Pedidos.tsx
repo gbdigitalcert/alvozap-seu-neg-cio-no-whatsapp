@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Bell, Check, X, Truck, Printer, MapPin, CheckCheck, MessageCircle } from "lucide-react";
+import { Search, Check, X, Truck, Printer, MapPin, CheckCheck, MessageCircle } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { NotificationsDropdown } from "@/components/pedidos/NotificationsDropdown";
 import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import burger from "@/assets/burger.jpg";
 import poke from "@/assets/poke.jpg";
@@ -173,12 +173,7 @@ export default function Pedidos() {
               className="pl-10 w-64 bg-card border-border"
             />
           </div>
-          <Button size="icon" variant="outline" className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          <NotificationsDropdown />
         </div>
       </motion.div>
 
