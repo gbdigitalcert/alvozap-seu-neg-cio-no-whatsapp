@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NotificationsDropdown } from "@/components/pedidos/NotificationsDropdown";
 import { PrintOrderModal } from "@/components/pedidos/PrintOrderModal";
+import { MapModal } from "@/components/pedidos/MapModal";
 import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import burger from "@/assets/burger.jpg";
 import poke from "@/assets/poke.jpg";
@@ -22,6 +23,7 @@ interface Order {
   status: OrderStatus;
   image: string;
   observations?: string;
+  address: string;
 }
 
 const initialOrders: Order[] = [
@@ -34,6 +36,7 @@ const initialOrders: Order[] = [
     timeAgo: "10 min atrás",
     status: "novo",
     image: pizzaMargherita,
+    address: "Rua das Flores, 123 - Centro, São Paulo - SP",
   },
   {
     id: "#8940",
@@ -44,6 +47,7 @@ const initialOrders: Order[] = [
     timeAgo: "25 min atrás",
     status: "preparando",
     image: burger,
+    address: "Av. Brasil, 456, Apto 12 - Jardins, São Paulo - SP",
   },
   {
     id: "#8938",
@@ -54,6 +58,7 @@ const initialOrders: Order[] = [
     timeAgo: "40 min atrás",
     status: "para_entrega",
     image: poke,
+    address: "Rua Augusta, 789 - Consolação, São Paulo - SP",
   },
 ];
 
@@ -78,10 +83,17 @@ export default function Pedidos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [printModalOpen, setPrintModalOpen] = useState(false);
   const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<Order | null>(null);
+  const [mapModalOpen, setMapModalOpen] = useState(false);
+  const [selectedOrderForMap, setSelectedOrderForMap] = useState<Order | null>(null);
 
   const handlePrintOrder = (order: Order) => {
     setSelectedOrderForPrint(order);
     setPrintModalOpen(true);
+  };
+
+  const handleViewMap = (order: Order) => {
+    setSelectedOrderForMap(order);
+    setMapModalOpen(true);
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -140,7 +152,12 @@ export default function Pedidos() {
       case "para_entrega":
         return (
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="gap-2 text-primary border-primary/30">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="gap-2 text-primary border-primary/30"
+              onClick={() => handleViewMap(order)}
+            >
               <MapPin className="w-4 h-4" />
               Ver no Mapa
             </Button>
@@ -311,6 +328,14 @@ export default function Pedidos() {
         open={printModalOpen}
         onOpenChange={setPrintModalOpen}
         order={selectedOrderForPrint}
+      />
+
+      {/* Map Modal */}
+      <MapModal
+        open={mapModalOpen}
+        onOpenChange={setMapModalOpen}
+        address={selectedOrderForMap?.address || ""}
+        customerName={selectedOrderForMap?.customer || ""}
       />
     </AppLayout>
   );
