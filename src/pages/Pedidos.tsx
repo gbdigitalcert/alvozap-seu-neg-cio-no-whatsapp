@@ -5,6 +5,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NotificationsDropdown } from "@/components/pedidos/NotificationsDropdown";
+import { PrintOrderModal } from "@/components/pedidos/PrintOrderModal";
 import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import burger from "@/assets/burger.jpg";
 import poke from "@/assets/poke.jpg";
@@ -20,6 +21,7 @@ interface Order {
   timeAgo: string;
   status: OrderStatus;
   image: string;
+  observations?: string;
 }
 
 const initialOrders: Order[] = [
@@ -74,6 +76,13 @@ export default function Pedidos() {
   const [orders, setOrders] = useState(initialOrders);
   const [activeFilter, setActiveFilter] = useState("todos");
   const [searchQuery, setSearchQuery] = useState("");
+  const [printModalOpen, setPrintModalOpen] = useState(false);
+  const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<Order | null>(null);
+
+  const handlePrintOrder = (order: Order) => {
+    setSelectedOrderForPrint(order);
+    setPrintModalOpen(true);
+  };
 
   const filteredOrders = orders.filter((order) => {
     const matchesFilter = activeFilter === "todos" || order.status === activeFilter;
@@ -117,7 +126,12 @@ export default function Pedidos() {
               <Truck className="w-4 h-4" />
               Despachar
             </Button>
-            <Button size="sm" variant="outline" className="gap-2">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => handlePrintOrder(order)}
+            >
               <Printer className="w-4 h-4" />
               Imprimir
             </Button>
@@ -291,6 +305,13 @@ export default function Pedidos() {
 
       {/* Spacer for fixed footer */}
       <div className="h-24" />
+
+      {/* Print Modal */}
+      <PrintOrderModal
+        open={printModalOpen}
+        onOpenChange={setPrintModalOpen}
+        order={selectedOrderForPrint}
+      />
     </AppLayout>
   );
 }
