@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle, LogOut, User, Headphones } from "lucide-react";
+import { LayoutDashboard, Bot, UtensilsCrossed, ClipboardList, Settings, MessageCircle, LogOut, User, Headphones, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -11,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWhatsApp } from "@/contexts/WhatsAppContext";
+import { WhatsAppConnectionModal } from "@/components/whatsapp/WhatsAppConnectionModal";
 import logoAlvo from "@/assets/logo-alvo.png";
 
 const navItems = [
@@ -25,6 +28,8 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isConnected } = useWhatsApp();
+  const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -93,10 +98,30 @@ export function Header() {
           {/* Actions */}
           <div className="flex items-center gap-3">
             <Button 
-              className="bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity gap-2 font-semibold shadow-soft"
+              onClick={() => setWhatsappModalOpen(true)}
+              className={`transition-opacity gap-2 font-semibold shadow-soft ${
+                isConnected 
+                  ? "bg-success hover:bg-success/90 text-success-foreground" 
+                  : "bg-gradient-primary text-primary-foreground hover:opacity-90"
+              }`}
             >
-              <MessageCircle className="w-4 h-4" />
-              Conectar WhatsApp
+              {isConnected ? (
+                <>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-foreground opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-success-foreground"></span>
+                  </span>
+                  WhatsApp Conectado
+                </>
+              ) : (
+                <>
+                  <span className="relative flex h-2 w-2">
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive"></span>
+                  </span>
+                  <MessageCircle className="w-4 h-4" />
+                  Conectar WhatsApp
+                </>
+              )}
             </Button>
 
             <DropdownMenu>
@@ -142,6 +167,12 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      {/* WhatsApp Connection Modal */}
+      <WhatsAppConnectionModal
+        open={whatsappModalOpen}
+        onOpenChange={setWhatsappModalOpen}
+      />
     </header>
   );
 }
