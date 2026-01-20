@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Check, X, Truck, Printer, MapPin, CheckCheck, MessageCircle } from "lucide-react";
+import { Search, Check, X, Truck, Printer, MapPin, CheckCheck, MessageCircle, RotateCcw } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NotificationsDropdown } from "@/components/pedidos/NotificationsDropdown";
 import { PrintOrderModal } from "@/components/pedidos/PrintOrderModal";
 import { MapModal } from "@/components/pedidos/MapModal";
+import { UndoDeliveryDialog } from "@/components/pedidos/UndoDeliveryDialog";
+import { toast } from "sonner";
 import pizzaMargherita from "@/assets/pizza-margherita.jpg";
 import burger from "@/assets/burger.jpg";
 import poke from "@/assets/poke.jpg";
@@ -85,6 +87,8 @@ export default function Pedidos() {
   const [selectedOrderForPrint, setSelectedOrderForPrint] = useState<Order | null>(null);
   const [mapModalOpen, setMapModalOpen] = useState(false);
   const [selectedOrderForMap, setSelectedOrderForMap] = useState<Order | null>(null);
+  const [undoDialogOpen, setUndoDialogOpen] = useState(false);
+  const [selectedOrderForUndo, setSelectedOrderForUndo] = useState<Order | null>(null);
 
   const handlePrintOrder = (order: Order) => {
     setSelectedOrderForPrint(order);
@@ -107,6 +111,35 @@ export default function Pedidos() {
     setOrders(prev => prev.map(order => 
       order.id === id ? { ...order, status: newStatus } : order
     ));
+  };
+
+  const handleConfirmDelivery = (order: Order) => {
+    updateOrderStatus(order.id, "entregue");
+    
+    toast.success("Entrega confirmada!", {
+      duration: 5000,
+      action: {
+        label: "Desfazer",
+        onClick: () => {
+          updateOrderStatus(order.id, "para_entrega");
+          toast.info("Entrega desfeita com sucesso!");
+        },
+      },
+    });
+  };
+
+  const handleUndoDelivery = (order: Order) => {
+    setSelectedOrderForUndo(order);
+    setUndoDialogOpen(true);
+  };
+
+  const confirmUndoDelivery = () => {
+    if (selectedOrderForUndo) {
+      updateOrderStatus(selectedOrderForUndo.id, "para_entrega");
+      toast.info("Status do pedido alterado para 'Para Entrega'");
+    }
+    setUndoDialogOpen(false);
+    setSelectedOrderForUndo(null);
   };
 
   const getOrderActions = (order: Order) => {
@@ -165,12 +198,24 @@ export default function Pedidos() {
               size="sm" 
               variant="outline" 
               className="gap-2 text-success border-success/30"
-              onClick={() => updateOrderStatus(order.id, "entregue")}
+              onClick={() => handleConfirmDelivery(order)}
             >
               <CheckCheck className="w-4 h-4" />
               Confirmar Entrega
             </Button>
           </div>
+        );
+      case "entregue":
+        return (
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="gap-2 text-warning border-warning/30 hover:bg-warning/10"
+            onClick={() => handleUndoDelivery(order)}
+          >
+            <RotateCcw className="w-4 h-4" />
+            Desfazer Entrega
+          </Button>
         );
       default:
         return null;
@@ -336,6 +381,14 @@ export default function Pedidos() {
         onOpenChange={setMapModalOpen}
         address={selectedOrderForMap?.address || ""}
         customerName={selectedOrderForMap?.customer || ""}
+      />
+
+      {/* Undo Delivery Dialog */}
+      <UndoDeliveryDialog
+        open={undoDialogOpen}
+        onOpenChange={setUndoDialogOpen}
+        onConfirm={confirmUndoDelivery}
+        orderNumber={selectedOrderForUndo?.id || ""}
       />
     </AppLayout>
   );
