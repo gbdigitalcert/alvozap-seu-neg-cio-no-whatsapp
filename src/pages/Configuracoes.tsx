@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Store, Clock, CreditCard, Bell, Shield, MessageCircle, Headphones } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
+import { useWhatsApp } from "@/contexts/WhatsAppContext";
+import { DisconnectWhatsAppDialog } from "@/components/whatsapp/DisconnectWhatsAppDialog";
 const settingsSections = [
   {
     title: "Informações do Estabelecimento",
@@ -45,6 +47,9 @@ const settingsSections = [
 ];
 
 export default function Configuracoes() {
+  const { isConnected } = useWhatsApp();
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
+
   return (
     <AppLayout>
       <motion.div
@@ -153,13 +158,28 @@ export default function Configuracoes() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium text-foreground">Desconectar WhatsApp</p>
-                  <p className="text-sm text-muted-foreground">Remove a conexão com seu número de WhatsApp</p>
+                  <p className="text-sm text-muted-foreground">
+                    {isConnected 
+                      ? "Remove a conexão com seu número de WhatsApp"
+                      : "Nenhum WhatsApp conectado no momento"
+                    }
+                  </p>
                 </div>
-                <Button variant="outline" className="text-destructive border-destructive/30 hover:bg-destructive/10">
-                  Desconectar
+                <Button 
+                  variant="outline" 
+                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                  onClick={() => setDisconnectDialogOpen(true)}
+                  disabled={!isConnected}
+                >
+                  {isConnected ? "Desconectar" : "Não Conectado"}
                 </Button>
               </div>
             </div>
+
+            <DisconnectWhatsAppDialog
+              open={disconnectDialogOpen}
+              onOpenChange={setDisconnectDialogOpen}
+            />
           </motion.div>
 
           {/* Save Button */}
